@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * The app renders inside a 320px (min) panel in the CMS, which already supplies
+ * px-6 pt-3 pb-4 around this iframe. So the document itself adds no outer
+ * padding - the usable column is 272px and starts at the edge.
+ */
+html,
+body {
+	margin: 0;
+	padding: 0;
+	background: #ffffff;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* The panel scrolls; a horizontal scrollbar in here is always a layout bug. */
+body {
+	overflow-x: hidden;
+}

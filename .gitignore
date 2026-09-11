@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+build
+.DS_Store
+*.pem
+.env*.local
+.vercel
+next-env.d.ts
+*.tsbuildinfo
+
+# The seeded design canvas is a 2.5MB generated bundle (the canvas editor plus
+# the artboards embedded in it). The .dc.html artboards beside it are the source
+# and are tracked; re-seed from those rather than committing the output.
+mockup/seo-analysis-sidebar.html

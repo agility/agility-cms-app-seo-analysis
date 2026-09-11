@@ -1,0 +1,21 @@
+{
+  "artboards": [
+    { "file": "Empty.dc.html",          "title": "1 · Empty — no keyphrase",   "x": 0,    "y": 0,    "w": 272, "h": 420 },
+    { "file": "Analyzing.dc.html",      "title": "2 · Analyzing",              "x": 392,  "y": 0,    "w": 272, "h": 560 },
+    { "file": "Main.dc.html",           "title": "3 · Results — needs work",   "x": 784,  "y": 0,    "w": 272, "h": 880 },
+    { "file": "Snippet.dc.html",        "title": "4 · Search appearance",      "x": 1176, "y": 0,    "w": 272, "h": 640 },
+    { "file": "Readability.dc.html",    "title": "5 · Readability tab",        "x": 1568, "y": 0,    "w": 272, "h": 800 },
+    { "file": "NotDynamic.dc.html",     "title": "6 · Not a dynamic page",     "x": 1960, "y": 0,    "w": 272, "h": 400 },
+    { "file": "Wide.dc.html",           "title": "7 · Sidebar at 640px max",   "x": 0,    "y": 1010, "w": 592, "h": 720 },
+    { "file": "KeyphraseField.dc.html", "title": "8 · Custom field, in form",  "x": 712,  "y": 1010, "w": 640, "h": 280 }
+  ],
+  "annotations": [
+    { "id": "sidebar-note", "x": 0,    "y": -150, "w": 640,
+      "text": "Sidebar states — 272px content column (Agility's 320px panel minus the host's 24px padding each side). Frames are the content column only; the host adds the padding around them." },
+    { "id": "wide-note",    "x": 0,    "y": 880,  "w": 500,
+      "text": "At the 640px max panel width the column reflows to two columns — analysis left, search appearance right." },
+    { "id": "field-note",   "x": 712,  "y": 880,  "w": 640,
+      "text": "The fields/SEOKeyphrase surface — where the keyphrase is actually stored, as a custom field on the content model. Renders inline in the content form, not in the sidebar." }
+  ],
+  "launch": { "view": "canvas" }
+}

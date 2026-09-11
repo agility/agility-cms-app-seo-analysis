@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; background: #ffffff;
+      font-family: "TTInterphasesPro", system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased; }
+    a { color: #5800D4; text-decoration: none; }
+    a:hover { color: #4600AA; text-decoration: underline; }
+    .lbl { font-size: 14px; line-height: 20px; color: #374151; letter-spacing: -0.28px; }
+    .inp { border: 1px solid #D1D5DB; border-radius: 4px; padding: 8px 12px;
+      font-size: 14px; line-height: 20px; background: #ffffff; }
+    .hint { font-size: 11px; line-height: 15px; color: #6B7280; letter-spacing: -0.22px; }
+    .dot { width: 8px; height: 8px; border-radius: 9999px; flex: 0 0 8px; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; width: 640px; box-sizing: border-box; gap: 16px;">
+
+  <!-- keyphrase row with inline score readout -->
+  <div style="display: flex; gap: 16px; align-items: flex-start;">
+    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+      <label class="lbl">SEO Keyphrase</label>
+      <div class="inp" style="color: #111827;">headless cms migration</div>
+      <div class="hint">The phrase this page should rank for. Drives the SEO Analysis panel.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; border: 1px solid #E5E7EB; border-radius: 4px; padding: 10px 12px; width: 168px; flex: 0 0 168px;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="dot" style="background: #F97316;"></span>
+        <span style="font-size: 12px; line-height: 16px; color: #374151; letter-spacing: -0.24px;">SEO</span>
+        <span style="flex-grow: 1;"></span>
+        <span style="font-size: 12px; line-height: 16px; color: #111827; font-weight: 600; font-variant-numeric: tabular-nums;">62</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="dot" style="background: #EF4444;"></span>
+        <span style="font-size: 12px; line-height: 16px; color: #374151; letter-spacing: -0.24px;">Readability</span>
+        <span style="flex-grow: 1;"></span>
+        <span style="font-size: 12px; line-height: 16px; color: #111827; font-weight: 600; font-variant-numeric: tabular-nums;">38</span>
+      </div>
+      <div style="border-top: 1px solid #E5E7EB; padding-top: 6px; margin-top: 2px;">
+        <a href="#" style="font-size: 11px; line-height: 15px; letter-spacing: -0.22px;">Open SEO Analysis</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- synonyms -->
+  <div style="display: flex; flex-direction: column; gap: 4px; width: 456px;">
+    <label class="lbl">Keyphrase synonyms</label>
+    <div class="inp" style="color: #6B7280;">Separate with commas</div>
+  </div>
+
+  <!-- cornerstone -->
+  <div style="display: flex; gap: 8px; align-items: flex-start;">
+    <div style="width: 16px; height: 16px; border: 1px solid #D1D5DB; border-radius: 3px; flex: 0 0 16px; margin-top: 2px; background: #ffffff;"></div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <label class="lbl" style="font-size: 13px; line-height: 18px;">Cornerstone content</label>
+      <div class="hint">Hold this page to a stricter standard &mdash; for the articles you most want to rank.</div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

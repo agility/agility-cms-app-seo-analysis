@@ -1,0 +1,12 @@
+Design tokens lifted from agility-cms-manager-app-react/tailwind.config.cjs
+and node_modules/@agility/plenum-ui component source:
+
+font    TTInterphasesPro, system-ui fallback
+input   rounded(4px) border py-2 px-3 text-sm/20  border #D1D5DB  focus #6D28D9  placeholder #6B7280
+btn sm  px-[13px] py-[9px] text-sm rounded(4px)
+btn xs  px-[11px] py-[7px] text-xs
+primary bg #5B21B6 hover #6D28D9
+alt     border #D1D5DB bg #fff text #374151 hover bg #F9FAFB
+label   text-sm/20 #374151   (PropertiesPanelLabel)
+gray    50 #F9FAFB 100 #F3F4F6 200 #E5E7EB 300 #D1D5DB 400 #9CA3AF 500 #6B7280 600 #4B5563 700 #374151 900 #111827
+red 500 #EF4444   orange 500 #F97316   green 500 #10B981

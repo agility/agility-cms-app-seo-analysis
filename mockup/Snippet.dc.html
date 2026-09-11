@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; background: #ffffff;
+      font-family: "TTInterphasesPro", system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased; }
+    a { color: #5800D4; text-decoration: none; }
+    a:hover { color: #4600AA; text-decoration: underline; }
+    .meter { height: 3px; border-radius: 9999px; background: #E5E7EB; overflow: hidden; }
+    .meterfill { height: 3px; border-radius: 9999px; }
+    .cnt { font-size: 10px; line-height: 14px; color: #9CA3AF; letter-spacing: -0.2px; }
+    .seg { padding: 4px 9px; font-size: 11px; line-height: 15px; letter-spacing: -0.22px; border-radius: 3px; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; width: 272px; box-sizing: border-box;">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px;">
+    <div style="font-size: 14px; line-height: 20px; font-weight: 600; color: #111827; letter-spacing: -0.28px;">Search appearance</div>
+    <div style="display: flex; gap: 2px; background: #F3F4F6; border-radius: 4px; padding: 2px;">
+      <div class="seg" style="background: #ffffff; color: #111827; font-weight: 600; box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.06);">Desktop</div>
+      <div class="seg" style="color: #6B7280;">Mobile</div>
+    </div>
+  </div>
+
+  <!-- google preview card -->
+  <div style="border: 1px solid #E5E7EB; border-radius: 4px; padding: 12px; display: flex; flex-direction: column; gap: 3px; margin-bottom: 16px;">
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <div style="width: 16px; height: 16px; border-radius: 9999px; background: #F3F4F6; flex: 0 0 16px;"></div>
+      <div style="display: flex; flex-direction: column;">
+        <div style="font-size: 11px; line-height: 14px; color: #202124; letter-spacing: -0.22px;">Northwind Digital</div>
+        <div style="font-size: 10px; line-height: 13px; color: #5F6368; letter-spacing: -0.2px;">northwind.com &rsaquo; blog &rsaquo; headless-cms-migration</div>
+      </div>
+    </div>
+    <div style="font-size: 15px; line-height: 20px; color: #1a0dab; letter-spacing: -0.15px; padding-top: 3px;">Migrating to a Headless CMS: A Practical Guide</div>
+    <div style="font-size: 11px; line-height: 16px; color: #4d5156; letter-spacing: -0.11px;">Everything you need to plan a headless CMS migration &mdash; content modelling, redirects, and&hellip;</div>
+  </div>
+
+  <!-- SEO title -->
+  <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 14px;">
+    <label style="font-size: 14px; line-height: 20px; color: #374151; letter-spacing: -0.28px;">SEO title</label>
+    <div style="border: 1px solid #D1D5DB; border-radius: 4px; padding: 8px 12px; font-size: 14px; line-height: 20px; color: #111827; background: #ffffff;">Migrating to a Headless CMS: A Practical Guide</div>
+    <div class="meter"><div class="meterfill" style="width: 88%; background: #10B981;"></div></div>
+    <div style="display: flex; justify-content: space-between;">
+      <span class="cnt">508 / 580 px</span>
+      <span class="cnt" style="color: #059669;">Good length</span>
+    </div>
+  </div>
+
+  <!-- meta description -->
+  <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 14px;">
+    <label style="font-size: 14px; line-height: 20px; color: #374151; letter-spacing: -0.28px;">Meta description</label>
+    <div style="border: 1px solid #D1D5DB; border-radius: 4px; padding: 8px 12px; font-size: 14px; line-height: 20px; color: #111827; background: #ffffff; min-height: 56px;">Everything you need to plan a headless CMS migration &mdash; content modelling, redirects, and rollout.</div>
+    <div class="meter"><div class="meterfill" style="width: 46%; background: #F97316;"></div></div>
+    <div style="display: flex; justify-content: space-between;">
+      <span class="cnt">431 / 920 px</span>
+      <span class="cnt" style="color: #C2410C;">Too short</span>
+    </div>
+  </div>
+
+  <div style="border-top: 1px solid #E5E7EB; padding-top: 10px; display: flex; gap: 6px; align-items: flex-start;">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: 0 0 12px; margin-top: 1px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+    <div style="font-size: 10px; line-height: 14px; color: #9CA3AF; letter-spacing: -0.2px;">Saves to <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: #6B7280;">DynamicPageMetaDescription</span> on this content item.</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+	"name": "SEO Analysis",
+	"documentationLink": "https://github.com/agility/agility-cms-app-seo-analysis",
+	"description": "Scores your dynamic pages for SEO and readability against a focus keyphrase, using the open-source YoastSEO.js analysis engine.",
+	"version": "0.1.0",
+	"__sdkVersion": "2.0.0",
+	"configValues": [
+		{
+			"name": "contentSelector",
+			"label": "Main content selector",
+			"type": "string",
+			"description": "CSS selector for the part of the rendered page to analyze. Defaults to 'main'. Nav, header and footer are excluded automatically."
+		},
+		{
+			"name": "defaultLocale",
+			"label": "Default analysis language",
+			"type": "string",
+			"description": "Fallback locale for the analysis when an Agility locale has no matching language, e.g. en_US."
+		}
+	],
+	"capabilities": {
+		"contentItemSidebar": {
+			"description": "SEO and readability analysis for this content item's dynamic page."
+		},
+		"installScreen": true
+	}
+}

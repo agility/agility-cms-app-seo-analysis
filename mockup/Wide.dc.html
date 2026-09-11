@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    body { margin: 0; background: #ffffff;
+      font-family: "TTInterphasesPro", system-ui, -apple-system, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased; }
+    a { color: #5800D4; text-decoration: none; }
+    a:hover { color: #4600AA; text-decoration: underline; }
+    .row { display: flex; gap: 8px; align-items: flex-start; }
+    .dot { width: 8px; height: 8px; border-radius: 9999px; flex: 0 0 8px; margin-top: 4px; }
+    .res { font-size: 12px; line-height: 16px; color: #374151; letter-spacing: -0.24px; }
+    .sec { display: flex; align-items: center; gap: 6px; width: 100%; background: none; border: 0;
+      padding: 0; cursor: pointer; color: #374151; font-family: inherit; }
+    .sect { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: -0.24px; }
+    .fix { font-size: 11px; line-height: 14px; color: #5800D4; white-space: nowrap; }
+    .cnt { font-size: 10px; line-height: 14px; color: #9CA3AF; letter-spacing: -0.2px; }
+    .meter { height: 3px; border-radius: 9999px; background: #E5E7EB; overflow: hidden; }
+  </style>
+</helmet>
+
+<div style="display: flex; flex-direction: column; width: 592px; box-sizing: border-box;">
+
+  <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px;">
+    <div style="font-size: 14px; line-height: 20px; font-weight: 600; color: #111827; letter-spacing: -0.28px;">SEO Analysis</div>
+    <div style="color: #9CA3AF;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+    </div>
+  </div>
+
+  <!-- keyphrase spans full width -->
+  <div style="display: flex; gap: 12px; align-items: flex-end; padding-bottom: 14px;">
+    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+      <label style="font-size: 14px; line-height: 20px; color: #374151; letter-spacing: -0.28px;">Focus keyphrase</label>
+      <div style="border: 1px solid #D1D5DB; border-radius: 4px; padding: 8px 12px; font-size: 14px; line-height: 20px; color: #111827; background: #ffffff;">headless cms migration</div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <div style="display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #E5E7EB; border-radius: 4px;">
+        <span class="dot" style="background: #F97316; margin-top: 0;"></span>
+        <span style="font-size: 12px; line-height: 16px; color: #374151; font-weight: 600; letter-spacing: -0.24px;">SEO</span>
+        <span style="font-size: 12px; line-height: 16px; color: #111827; font-weight: 600; font-variant-numeric: tabular-nums;">62</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #E5E7EB; border-radius: 4px;">
+        <span class="dot" style="background: #EF4444; margin-top: 0;"></span>
+        <span style="font-size: 12px; line-height: 16px; color: #374151; font-weight: 600; letter-spacing: -0.24px;">Readability</span>
+        <span style="font-size: 12px; line-height: 16px; color: #111827; font-weight: 600; font-variant-numeric: tabular-nums;">38</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- two columns -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;">
+
+    <!-- left: analysis -->
+    <div style="display: flex; flex-direction: column;">
+      <div style="display: flex; gap: 0; border-bottom: 1px solid #E5E7EB; margin-bottom: 12px;">
+        <div style="padding: 6px 10px; font-size: 12px; line-height: 16px; color: #111827; font-weight: 600; border-bottom: 2px solid #5B21B6; margin-bottom: -1px; letter-spacing: -0.24px;">SEO</div>
+        <div style="padding: 6px 10px; font-size: 12px; line-height: 16px; color: #6B7280; letter-spacing: -0.24px;">Readability</div>
+        <div style="padding: 6px 10px; font-size: 12px; line-height: 16px; color: #6B7280; letter-spacing: -0.24px;">Social</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 14px;">
+        <button class="sec">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <span class="sect">Problems (3)</span>
+        </button>
+        <div class="row">
+          <span class="dot" style="background: #EF4444;"></span>
+          <div class="res" style="flex-grow: 1;"><strong style="font-weight: 600;">Keyphrase in introduction:</strong> Your keyphrase doesn't appear in the first paragraph.</div>
+        </div>
+        <div class="row">
+          <span class="dot" style="background: #EF4444;"></span>
+          <div class="res" style="flex-grow: 1;"><strong style="font-weight: 600;">Meta description length:</strong> No meta description has been specified.</div>
+          <span class="fix">Write one</span>
+        </div>
+        <div class="row">
+          <span class="dot" style="background: #EF4444;"></span>
+          <div class="res" style="flex-grow: 1;"><strong style="font-weight: 600;">Images:</strong> No images appear on this page. Add some.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-bottom: 14px;">
+        <button class="sec">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <span class="sect">Improvements (2)</span>
+        </button>
+        <div class="row">
+          <span class="dot" style="background: #F97316;"></span>
+          <div class="res" style="flex-grow: 1;"><strong style="font-weight: 600;">Text length:</strong> The text contains 212 words, below the recommended 300.</div>
+        </div>
+        <div class="row">
+          <span class="dot" style="background: #F97316;"></span>
+          <div class="res" style="flex-grow: 1;"><strong style="font-weight: 600;">Keyphrase in slug:</strong> Not all the words from your keyphrase appear in the slug.</div>
+          <span class="fix">Edit slug</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="sec">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="sect">Good (7)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- right: snippet -->
+    <div style="display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px;">
+        <div style="font-size: 12px; line-height: 16px; font-weight: 600; color: #111827; letter-spacing: -0.24px;">Search appearance</div>
+        <div style="display: flex; gap: 2px; background: #F3F4F6; border-radius: 4px; padding: 2px;">
+          <div style="padding: 4px 9px; font-size: 11px; line-height: 15px; border-radius: 3px; background: #ffffff; color: #111827; font-weight: 600;">Desktop</div>
+          <div style="padding: 4px 9px; font-size: 11px; line-height: 15px; border-radius: 3px; color: #6B7280;">Mobile</div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid #E5E7EB; border-radius: 4px; padding: 12px; display: flex; flex-direction: column; gap: 3px; margin-bottom: 14px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <div style="width: 16px; height: 16px; border-radius: 9999px; background: #F3F4F6; flex: 0 0 16px;"></div>
+          <div style="display: flex; flex-direction: column;">
+            <div style="font-size: 11px; line-height: 14px; color: #202124; letter-spacing: -0.22px;">Northwind Digital</div>
+            <div style="font-size: 10px; line-height: 13px; color: #5F6368; letter-spacing: -0.2px;">northwind.com &rsaquo; blog &rsaquo; headless-cms-migration</div>
+          </div>
+        </div>
+        <div style="font-size: 15px; line-height: 20px; color: #1a0dab; letter-spacing: -0.15px; padding-top: 3px;">Migrating to a Headless CMS: A Practical Guide</div>
+        <div style="font-size: 11px; line-height: 16px; color: #4d5156; letter-spacing: -0.11px;">Everything you need to plan a headless CMS migration &mdash; content modelling, redirects, and&hellip;</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px; padding-bottom: 12px;">
+        <label style="font-size: 14px; line-height: 20px; color: #374151; letter-spacing: -0.28px;">SEO title</label>
+        <div style="border: 1px solid #D1D5DB; border-radius: 4px; padding: 8px 12px; font-size: 14px; line-height: 20px; color: #111827;">Migrating to a Headless CMS: A Practical Guide</div>
+        <div class="meter"><div style="height: 3px; border-radius: 9999px; width: 88%; background: #10B981;"></div></div>
+        <div style="display: flex; justify-content: space-between;"><span class="cnt">508 / 580 px</span><span class="cnt" style="color: #059669;">Good length</span></div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 14px; line-height: 20px; color: #374151; letter-spacing: -0.28px;">Meta description</label>
+        <div style="border: 1px solid #D1D5DB; border-radius: 4px; padding: 8px 12px; font-size: 14px; line-height: 20px; color: #111827; min-height: 56px;">Everything you need to plan a headless CMS migration &mdash; content modelling, redirects, and rollout.</div>
+        <div class="meter"><div style="height: 3px; border-radius: 9999px; width: 46%; background: #F97316;"></div></div>
+        <div style="display: flex; justify-content: space-between;"><span class="cnt">431 / 920 px</span><span class="cnt" style="color: #C2410C;">Too short</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="border-top: 1px solid #E5E7EB; padding-top: 10px; margin-top: 18px; display: flex; justify-content: space-between;">
+    <div style="font-size: 10px; line-height: 14px; color: #9CA3AF; letter-spacing: -0.2px;">Analyzed the rendered page 4 minutes ago</div>
+    <div style="font-size: 10px; line-height: 14px; color: #9CA3AF; letter-spacing: -0.2px;">Analysis powered by YoastSEO.js</div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
