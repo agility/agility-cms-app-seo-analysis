@@ -3,6 +3,57 @@
 @tailwind utilities;
 
 /*
+ * TT Interphases Pro - the Agility manager's typeface.
+ *
+ * The app renders in a cross-origin iframe, so it inherits nothing from the CMS
+ * shell: naming the family in Tailwind was never enough, the face has to be
+ * loaded here too or every surface silently falls back to system-ui (which on
+ * Linux resolves through fontconfig and can land on something that is not even
+ * proportional).
+ *
+ * Served from Agility's own CDN - the same files the manager loads, so the
+ * panel and the page around it can never drift - and it answers with
+ * Access-Control-Allow-Origin: *, which a cross-origin font needs.
+ *
+ * Only the three weights the UI uses are declared. The family ships 18 faces;
+ * pulling all of them would cost real bytes for italics and weights nothing
+ * renders.
+ */
+@font-face {
+	font-family: "TTInterphasesPro";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("https://cdn.aglty.io/content-manager/fonts/interphases/woff2/TT_Interphases_Pro_Regular-1.woff2")
+			format("woff2"),
+		url("https://cdn.aglty.io/content-manager/fonts/interphases/woff/TT_Interphases_Pro_Regular-1.woff")
+			format("woff");
+}
+
+@font-face {
+	font-family: "TTInterphasesPro";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("https://cdn.aglty.io/content-manager/fonts/interphases/woff2/TT_Interphases_Pro_Medium.woff2")
+			format("woff2"),
+		url("https://cdn.aglty.io/content-manager/fonts/interphases/woff/TT_Interphases_Pro_Medium.woff")
+			format("woff");
+}
+
+@font-face {
+	font-family: "TTInterphasesPro";
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url("https://cdn.aglty.io/content-manager/fonts/interphases/woff2/TT_Interphases_Pro_DemiBold.woff2")
+			format("woff2"),
+		url("https://cdn.aglty.io/content-manager/fonts/interphases/woff/TT_Interphases_Pro_DemiBold.woff")
+			format("woff");
+}
+
+
+/*
  * The app renders inside a 320px (min) panel in the CMS, which already supplies
  * px-6 pt-3 pb-4 around this iframe. So the document itself adds no outer
  * padding - the usable column is 272px and starts at the edge.

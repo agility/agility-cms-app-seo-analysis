@@ -16,6 +16,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
+			<head>
+				{/* The typeface is fetched from Agility's CDN on first paint (see
+				    globals.css); warming the connection keeps the swap brief. */}
+				<link rel="preconnect" href="https://cdn.aglty.io" crossOrigin="anonymous" />
+			</head>
 			<body className="font-sans text-gray-900 antialiased">{children}</body>
 		</html>
 	)

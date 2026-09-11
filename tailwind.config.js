@@ -4,10 +4,23 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				// Matches the Agility manager app. The face is not served by this
-				// app, but the CMS shell loads it and the iframe inherits nothing,
-				// so the fallback stack is what actually renders in most installs.
-				sans: ["TTInterphasesPro", "system-ui", "-apple-system", "Segoe UI", "sans-serif"]
+				// The face itself is loaded by @font-face in globals.css - an iframe
+				// inherits no fonts from the CMS shell, so naming it here alone
+				// renders the fallback. Every fallback is quoted and named
+				// explicitly rather than leaning on system-ui, which resolves
+				// through fontconfig on Linux and is not reliably proportional.
+				sans: [
+					"TTInterphasesPro",
+					"system-ui",
+					"-apple-system",
+					'"Segoe UI"',
+					"Roboto",
+					'"Helvetica Neue"',
+					"Arial",
+					'"Liberation Sans"',
+					'"DejaVu Sans"',
+					"sans-serif"
+				]
 			},
 			fontSize: {
 				"2xs": ["0.625rem", "0.875rem"],

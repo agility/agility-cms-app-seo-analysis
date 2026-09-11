@@ -130,6 +130,26 @@ npm run typecheck
 npm run build
 ```
 
+## Matching the CMS visually
+
+The panel is an iframe, so it inherits **nothing** from the manager shell - not
+fonts, not tokens. Both have to be reproduced deliberately:
+
+- **Type.** TT Interphases Pro is loaded by `@font-face` in
+  `src/app/globals.css`, pointing at the same `cdn.aglty.io` files the manager
+  uses, so the two can't drift. Naming the family in Tailwind alone is not
+  enough and fails quietly - it falls through to `system-ui`, which resolves via
+  fontconfig on Linux and is not reliably proportional. Only the three weights
+  the UI uses (400/500/600) are declared, of the 18 the family ships.
+- **Colors, spacing, control sizing.** Lifted from
+  `agility-cms-manager-app-react/tailwind.config.cjs` and the `@agility/plenum-ui`
+  component source, not eyeballed: inputs are `rounded` (4px) `border px-3 py-2`
+  `text-sm/20` on `#D1D5DB`, focusing to violet-700 `#6D28D9`; primary buttons
+  are violet-800 `#5B21B6`.
+- **Width.** The panel is 320px by default (min 320, max 640) and the host adds
+  `px-6`, so the usable column is **272px**. The app adds no outer padding of
+  its own.
+
 ## Known constraints
 
 - **22 languages** have dedicated analysis. Others fall back to a
