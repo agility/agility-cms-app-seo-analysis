@@ -3,6 +3,8 @@ import { useCallback, useState } from "react"
 export interface PageContent {
 	previewUrl: string
 	liveUrl: string | null
+	/** The focus keyphrase saved for this item, if any. */
+	keyphrase: string | null
 	html: string
 	documentTitle: string
 	metaDescription: string

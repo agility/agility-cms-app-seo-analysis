@@ -12,11 +12,11 @@ export default function HomePage() {
 				Agility instance and it renders in the content item sidebar.
 			</p>
 			<p className="text-sm leading-6 text-gray-600">
-				Analysis is powered by{" "}
+				The analysis uses the open-source{" "}
 				<a href="https://github.com/Yoast/wordpress-seo" className="text-purple-700 underline">
 					YoastSEO.js
-				</a>
-				, the open-source engine behind Yoast SEO for WordPress.
+				</a>{" "}
+				library (GPL-3.0). This app is not affiliated with or endorsed by Yoast BV.
 			</p>
 			<p className="text-xs leading-5 text-gray-500">
 				Register this URL as an app in Agility, without a trailing slash.

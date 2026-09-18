@@ -1,6 +1,8 @@
 interface KeyphraseInputProps {
 	value: string
 	onChange: (value: string) => void
+	/** Fired when the editor settles on a value: blur, or Enter. */
+	onCommit?: (value: string) => void
 	isDisabled?: boolean
 	label?: string
 	hint?: string
@@ -15,6 +17,7 @@ interface KeyphraseInputProps {
 export function KeyphraseInput({
 	value,
 	onChange,
+	onCommit,
 	isDisabled,
 	label = "Focus keyphrase",
 	hint,
@@ -33,6 +36,10 @@ export function KeyphraseInput({
 				disabled={isDisabled}
 				placeholder="e.g. headless CMS migration"
 				onChange={(event) => onChange(event.target.value)}
+				onBlur={(event) => onCommit?.(event.target.value)}
+				onKeyDown={(event) => {
+					if (event.key === "Enter") onCommit?.(event.currentTarget.value)
+				}}
 				className="w-full rounded border border-gray-300 px-3 py-2 text-sm font-normal leading-5 text-gray-900 outline-none transition-colors placeholder:text-gray-500 hover:border-gray-500 focus:border-violet-700 disabled:bg-gray-50 disabled:text-gray-500"
 			/>
 			{hint ? <p className="text-[11px] leading-[15px] tracking-tiny text-gray-500">{hint}</p> : null}

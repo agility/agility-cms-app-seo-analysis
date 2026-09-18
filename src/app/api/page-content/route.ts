@@ -8,6 +8,7 @@ import {
 	getItemDetails
 } from "@/agility/managementApi"
 import { buildItemUrl } from "@/agility/itemUrl"
+import { getKeyphraseStore, keyphraseKey } from "@/store/keyphraseStore"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -106,7 +107,12 @@ export async function POST(request: Request) {
 			)
 		}
 
-		const { html, status } = await fetchRenderedPage(itemPreviewUrl)
+		// The stored keyphrase rides along with the page: this route has already
+		// proven the caller can read the item, so no second authorization trip.
+		const [{ html, status }, stored] = await Promise.all([
+			fetchRenderedPage(itemPreviewUrl),
+			readStoredKeyphrase(guid, locale, contentID)
+		])
 
 		if (!html) {
 			return NextResponse.json(
@@ -120,11 +126,25 @@ export async function POST(request: Request) {
 		return NextResponse.json({
 			previewUrl: itemPreviewUrl,
 			liveUrl: itemLiveUrl,
+			keyphrase: stored?.keyphrase ?? null,
 			...extracted
 		})
 	} catch (error) {
 		console.error("[seo-analysis] page content failed", error)
 		return NextResponse.json({ error: "page-content-failed" }, { status: 500 })
+	}
+}
+
+/**
+ * The stored keyphrase, or null. A store that is missing or down must not take
+ * the analysis down with it: the page still scores, the field is just empty.
+ */
+async function readStoredKeyphrase(guid: string, locale: string, contentID: number) {
+	try {
+		return await getKeyphraseStore().get(keyphraseKey(guid, locale, contentID))
+	} catch (error) {
+		console.warn("[seo-analysis] keyphrase read failed", error)
+		return null
 	}
 }
 

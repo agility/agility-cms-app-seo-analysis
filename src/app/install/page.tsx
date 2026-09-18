@@ -75,8 +75,9 @@ export default function InstallScreen() {
 
 			<div className="flex items-center justify-between gap-4 pt-1">
 				<p className="text-xs leading-5 text-gray-500">
-					Analysis is powered by YoastSEO.js, licensed GPL-3.0. It runs on this app&rsquo;s
-					server and is never sent to your browser.
+					This app uses the open-source YoastSEO.js library (GPL-3.0). The library runs
+					on this app&rsquo;s server; your browser receives only scores and feedback text.
+					Not affiliated with or endorsed by Yoast BV.
 				</p>
 
 				<button

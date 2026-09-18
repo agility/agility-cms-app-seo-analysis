@@ -17,6 +17,7 @@ import { Tabs, type TabKey } from "@/components/Tabs"
 import { measureTitleWidth } from "@/lib/pixelWidth"
 import { useAnalysis } from "@/lib/useAnalysis"
 import { useDebouncedValue } from "@/lib/useDebouncedValue"
+import { useKeyphraseSave } from "@/lib/useKeyphraseSave"
 import { usePageContent } from "@/lib/usePageContent"
 
 /**
@@ -33,8 +34,9 @@ export default function ContentItemSidebar() {
 		useAgilityAppSDK()
 
 	const [activeTab, setActiveTab] = useState<TabKey>("seo")
-	// Session-only: typed by the editor, gone when the panel closes. Nothing reads
-	// or writes it on the content item yet.
+	// Seeded from the app's own store when the page loads, written back on
+	// commit (blur / Enter). Not a field on the content item - see
+	// src/store/keyphraseStore.ts for why.
 	const [keyphrase, setKeyphrase] = useState("")
 	const [description, setDescription] = useState("")
 
@@ -42,6 +44,7 @@ export default function ContentItemSidebar() {
 
 	const { state: pageState, load: loadPage } = usePageContent()
 	const { state: analysisState, run: runAnalysis } = useAnalysis()
+	const { state: saveState, save: saveKeyphrase, markSaved } = useKeyphraseSave()
 
 	const contentSelector = appInstallContext?.configuration?.contentSelector
 	const defaultLocale = appInstallContext?.configuration?.defaultLocale
@@ -83,6 +86,36 @@ export default function ContentItemSidebar() {
 		if (initializing) return
 		void loadRenderedPage()
 	}, [initializing, loadRenderedPage])
+
+	// Seed the keyphrase from the store, once per page load. Loading a new item
+	// goes through here too, so the previous item's phrase never carries over.
+	useEffect(() => {
+		if (pageState.status !== "ready") return
+		const stored = pageState.data.keyphrase ?? ""
+		setKeyphrase(stored)
+		markSaved(stored)
+	}, [pageState, markSaved])
+
+	const onKeyphraseCommit = useCallback(
+		async (value: string) => {
+			if (!contentItem?.contentID || !instance?.guid || !locale) return
+
+			const token = await getManagementAPIToken()
+			if (!token) return
+
+			await saveKeyphrase(
+				{
+					mgmtApiUrl: resolveManagementApiUrl(),
+					token,
+					guid: instance.guid,
+					locale,
+					contentID: contentItem.contentID
+				},
+				value
+			)
+		},
+		[contentItem?.contentID, instance?.guid, locale, saveKeyphrase]
+	)
 
 	const debouncedKeyphrase = useDebouncedValue(keyphrase)
 	const debouncedDescription = useDebouncedValue(description)
@@ -162,7 +195,8 @@ export default function ContentItemSidebar() {
 			<KeyphraseInput
 				value={keyphrase}
 				onChange={setKeyphrase}
-				hint="Not saved yet - the analysis below updates as you type."
+				onCommit={onKeyphraseCommit}
+				hint={KEYPHRASE_HINTS[saveState]}
 			/>
 
 			{pageState.status === "error" ? (
@@ -237,6 +271,15 @@ export default function ContentItemSidebar() {
 	)
 }
 
+const KEYPHRASE_HINTS: Record<ReturnType<typeof useKeyphraseSave>["state"], string> = {
+	idle: "Saved for this item when you leave the field. The analysis updates as you type.",
+	saving: "Saving\u2026",
+	saved: "Saved for this item.",
+	error: "Could not save the keyphrase. The analysis still uses it for this session.",
+	"not-configured":
+		"This app has no keyphrase storage configured, so the phrase is not saved. Ask whoever hosts it to connect Redis."
+}
+
 function Panel({ children }: { children: React.ReactNode }) {
 	// The CMS panel already supplies px-6 pt-3 pb-4 around this iframe, so the
 	// app adds no outer padding of its own.
@@ -245,8 +288,8 @@ function Panel({ children }: { children: React.ReactNode }) {
 
 function Header({ onRefresh }: { onRefresh: (() => void) | null }) {
 	return (
-		<div className="flex items-center justify-between pb-2.5">
-			<h1 className="text-sm font-semibold leading-5 tracking-label text-gray-900">SEO Analysis</h1>
+		<div className="flex items-center justify-between">
+			<h1 className="text-sm font-semibold leading-5 tracking-label text-gray-900"></h1>
 			{onRefresh ? (
 				<button
 					type="button"
@@ -270,7 +313,7 @@ function Footer({ wordCount }: { wordCount?: number | null }) {
 				</span>
 			) : null}
 			<span className="text-2xs leading-[14px] tracking-tiny text-gray-400">
-				Analysis powered by YoastSEO.js
+				Uses the open-source YoastSEO.js library
 			</span>
 		</div>
 	)

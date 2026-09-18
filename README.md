@@ -2,7 +2,7 @@
 
 An Agility CMS app that scores dynamic-page content items — blog posts,
 articles, products — for SEO and readability against a focus keyphrase, using
-the open-source [YoastSEO.js](https://github.com/Yoast/wordpress-seo) engine.
+the open-source [YoastSEO.js](https://github.com/Yoast/wordpress-seo) library.
 
 It renders in the **content item sidebar**, reads the item's real rendered page,
 and writes meta descriptions back to Agility's own SEO fields so an existing site
@@ -77,17 +77,34 @@ because "your keyphrase does not appear in the title" is not something an editor
 can act on when they haven't set one. The split lives in
 `src/analysis/keyphraseChecks.ts`.
 
-**Where a keyphrase should be stored is still open.** The options, and why none
-is obviously right yet:
+### Where the keyphrase is stored
 
-- *A custom field on the model* — versioned with the item and visible inline,
-  but it is a schema change, which in most organisations is a developer task.
-- *An app-owned content list*, provisioned through the Management API — works on
-  existing models, but the app creates schema in the customer's instance.
-- *`persistData` in the App SDK* — **not viable.** It appears in the operation
-  type union but has no handler in the manager, so it resolves as "operation not
-  supported on this surface". It is also per-user, so two editors would see
-  different keyphrases for the same post.
+In the app's own key-value store, not on the content item. Agility's SEO
+fields hold the meta description because an existing site reads them through
+the Fetch API. Nothing reads a keyphrase, so putting it on the item would mean
+either a model change on every customer's schema or borrowing the meta
+keywords field, which means something else.
+
+| | |
+|---|---|
+| Store | Upstash Redis via the **Vercel Marketplace** (`@upstash/redis`). Vercel provisions it, bills it and injects the credentials; the data lives outside the app, so it survives cold starts and deploys. Development falls back to an in-memory map when the env vars are absent. **Production does not fall back**: saves fail with a visible message rather than silently losing data. |
+| Key | `{guid}-{locale}-content-{contentID}` — see `src/store/keyphraseStore.ts`. Content IDs are shared across an item's locales and a keyphrase is language-specific, so the locale is part of the key. |
+| Value | `{ keyphrase, updatedAt }` |
+| Read | Returned by `/api/page-content` alongside the rendered page, so it costs no extra round trip and no extra authorization. |
+| Write | `PUT /api/keyphrase`, on **blur or Enter**, never per keystroke. An empty value deletes the key. |
+| Authorization | The caller's Management API token must be able to read the item it names. The route re-fetches the item with it before writing. |
+| Region | One database, one region, chosen when it is created. Agility has instances in Canada, Europe and Australia as well as the US, and keyphrases from all of them land in this one region. A keyphrase is low-sensitivity, but say so in any data-processing description of the app. |
+
+The `isCornerstone` flag the engine already supports can be stored the same
+way when it is exposed.
+
+Rejected: a *field on the model* (schema change, a developer task at most
+customers), the *meta keywords system field* (works, but it is a different
+concept - a rendered list search engines ignore, not a ranking target - and
+the CMS's SEO tab shows it to editors), an *app-owned content list* via the
+Management API (creates schema in the customer's instance), *`persistData` in
+the App SDK* (no handler in the manager; per-user), and *SQLite on the app*
+(Vercel's filesystem is ephemeral).
 
 ## Where meta data is stored
 
@@ -113,7 +130,9 @@ Local development needs a public tunnel:
 cloudflared tunnel --url http://localhost:3060
 ```
 
-Then register the tunnel URL as a private app on a dev instance.
+Then register the tunnel URL as a private app on a dev instance. Keyphrases
+are held in memory until `UPSTASH_REDIS_REST_URL` / `_TOKEN` are set - see
+`.env.local.example`.
 
 > **Register the URL without a trailing slash.** Every surface URL is built with
 > trailing-slash normalization except the install screen
@@ -168,7 +187,15 @@ fonts, not tokens. Both have to be reproduced deliberately:
 
 ## Licensing
 
-`yoastseo` is GPL-3.0 and runs **server-side only** so it is never conveyed to a
-browser. This is an engineering mitigation that still needs legal sign-off —
-read [docs/LICENSING.md](docs/LICENSING.md) before changing where the analysis
-runs, and before shipping.
+This app is licensed under the **GNU General Public License v3.0** — see
+[LICENSE](LICENSE). It is built on `yoastseo`, which is GPL-3.0, and the
+coupling is close enough that the app is treated as a derivative work and
+licensed the same way.
+
+`yoastseo` runs **server-side only**, so the browser receives scores and
+feedback text rather than the library itself. Read
+[docs/LICENSING.md](docs/LICENSING.md) before changing where the analysis runs.
+
+"Yoast" is a trademark of Yoast BV. This app is not affiliated with or endorsed
+by Yoast; the name YoastSEO.js is used only to identify the library it depends
+on. See [docs/LICENSING.md](docs/LICENSING.md#trademark).

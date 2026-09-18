@@ -2,6 +2,11 @@
 	"name": "agility-seo-analysis-app",
 	"version": "0.1.0",
 	"private": true,
+	"license": "GPL-3.0-only",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/agility/agility-cms-app-seo-analysis.git"
+	},
 	"engines": {
 		"node": ">=20.0.0"
 	},
@@ -14,6 +19,7 @@
 	},
 	"dependencies": {
 		"@agility/app-sdk": "^2.2.1",
+		"@upstash/redis": "^1.38.4",
 		"classnames": "^2.5.1",
 		"linkedom": "^0.18.5",
 		"next": "^15.5.4",

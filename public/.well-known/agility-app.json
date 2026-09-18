@@ -1,7 +1,7 @@
 {
 	"name": "SEO Analysis",
 	"documentationLink": "https://github.com/agility/agility-cms-app-seo-analysis",
-	"description": "Scores your dynamic pages for SEO and readability against a focus keyphrase, using the open-source YoastSEO.js analysis engine.",
+	"description": "Scores your dynamic pages for SEO and readability against a focus keyphrase, using the open-source YoastSEO.js analysis library.",
 	"version": "0.1.0",
 	"__sdkVersion": "2.0.0",
 	"configValues": [
