@@ -11,8 +11,8 @@ import { toResearcherLanguage } from "./locale"
  * The map is written out longhand rather than built from a template string
  * because a computed `require` is invisible to webpack: it warns "the request of
  * a dependency is an expression" at build time and then throws MODULE_NOT_FOUND
- * at runtime, even with the package marked external. Static calls are left
- * intact as external requires and resolved by Node.
+ * at runtime. Static calls are seen by webpack and bundled into the route (see
+ * next.config.js for why yoastseo is bundled rather than left external).
  *
  * Deep paths under build/ are documented as internal, so this map is the one
  * place a yoastseo upgrade can break us - which is also why it is a visible

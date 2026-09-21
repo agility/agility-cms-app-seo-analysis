@@ -3,13 +3,19 @@ const nextConfig = {
 	reactStrictMode: true,
 
 	/*
-	 * `yoastseo` stays out of the bundle and is resolved by Node at runtime.
-	 * Two reasons: researcher.ts resolves a language Researcher by computed path
-	 * (which webpack cannot statically analyze - it warns "the request of a
-	 * dependency is an expression" and bundles every language to be safe), and
-	 * the package is ~2.4MB of language data that has no business in a build.
+	 * `yoastseo` is deliberately NOT in `serverExternalPackages`, so webpack
+	 * bundles it into the analyze route (~2.8MB of server code, all 22 language
+	 * Researchers included). It was external once, to keep that data out of the
+	 * build - but yoastseo's CommonJS build does `require("parse5")`, and parse5
+	 * v8 is ESM-only. Node 20.19+/22.12+/24 allow require(esm) so that works
+	 * locally, while Vercel's function loader does not: every call to
+	 * /api/analyze failed at module load with ERR_REQUIRE_ESM and the sidebar
+	 * showed "The analysis could not be run". Bundled, webpack handles the ESM
+	 * interop and the runtime never sees the require.
+	 *
+	 * To check the fix locally, run the production server with require(esm) off:
+	 *   NODE_OPTIONS=--no-experimental-require-module npm start
 	 */
-	serverExternalPackages: ["yoastseo"],
 
 	/*
 	 * The whole app renders inside an iframe in the Agility manager, so nothing
