@@ -13,6 +13,7 @@ import { useAnalysis } from "@/lib/useAnalysis"
 import { useDebouncedValue } from "@/lib/useDebouncedValue"
 import { useKeyphraseSave } from "@/lib/useKeyphraseSave"
 import { type PageContentState, usePageContent } from "@/lib/usePageContent"
+import { usePageItem } from "@/lib/usePageItem"
 import { usePageSeoSave } from "@/lib/usePageSeoSave"
 
 /**
@@ -20,15 +21,18 @@ import { usePageSeoSave } from "@/lib/usePageSeoSave"
  *
  * Same panel as the content item sidebar, two differences underneath:
  *
- * 1. The page is found by its own ID. The SDK's pageItem is the manager's
- *    legacy shape, where the page ID is `ItemContainerID` (pages are items
- *    internally) - the same field the manager itself passes as pageID.
+ * 1. The page is found by its own ID. The page item is the manager's legacy
+ *    shape, where the page ID is `ItemContainerID` (pages are items
+ *    internally) - the same field the manager itself passes as pageID. It is
+ *    fetched by usePageItem, because useAgilityAppSDK never fills in its own
+ *    `pageItem` (see that hook for why).
  * 2. The App SDK is read-only here - no setFieldValue - so the meta description
  *    is saved through the Management API on commit (blur), not per keystroke.
  *    Each save is a whole-page write and a new version, so one per edit.
  */
 export default function PageSidebar() {
-	const { initializing, appInstallContext, instance, locale: sdkLocale, pageItem } = useAgilityAppSDK()
+	const { initializing, appInstallContext, instance, locale: sdkLocale } = useAgilityAppSDK()
+	const pageItem = usePageItem(initializing)
 
 	const [keyphrase, setKeyphrase] = useState("")
 	const [description, setDescription] = useState("")
@@ -155,10 +159,10 @@ export default function PageSidebar() {
 		// page's SEO tab. The engine still reports them; we don't claim to fix them.
 	}, [])
 
-	if (initializing) {
+	if (initializing || !pageItem) {
 		return (
 			<Panel>
-				<AnalysisSkeleton label="Connecting to Agility&hellip;" />
+				<AnalysisSkeleton label={initializing ? "Connecting to Agility\u2026" : "Loading page\u2026"} />
 			</Panel>
 		)
 	}
