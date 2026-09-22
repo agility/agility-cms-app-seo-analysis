@@ -24,24 +24,44 @@ export function KeyphraseUnlockPrompt({ lockedCount }: { lockedCount: number }) 
 	)
 }
 
+/** The reasons a surface can be open on something that has no rendered page. */
+export type UnsupportedReason = "not-a-dynamic-page" | "folder-or-link" | "dynamic-page-node"
+
+const UNSUPPORTED_COPY: Record<UnsupportedReason, { title: string; body: string }> = {
+	"not-a-dynamic-page": {
+		title: "This content item isn\u2019t connected to a dynamic page.",
+		body:
+			"SEO analysis needs a rendered URL to score against. Enable a dynamic page on this " +
+			"container to turn it on."
+	},
+	"folder-or-link": {
+		title: "This page has no content of its own.",
+		body: "Folders and links don\u2019t render a page, so there is nothing to score here."
+	},
+	"dynamic-page-node": {
+		title: "This is a dynamic page template.",
+		body:
+			"The content items it lists are the pages that actually render. Open one of them - " +
+			"the analysis is in its sidebar."
+	}
+}
+
 /**
- * Shown when the item's container is not a dynamic page list.
+ * Shown when the thing in the sidebar has no rendered page to score.
  *
- * This is not an error - most content models are building blocks, not pages.
- * The panel mounts on every content item, so this state is common and should
- * read as information rather than a failure.
+ * This is not an error - most content models are building blocks, not pages,
+ * and a page tree is full of folders. The panel mounts on every item and every
+ * page, so this state is common and should read as information rather than a
+ * failure.
  */
-export function NotDynamicPageState() {
+export function UnsupportedState({ reason }: { reason: UnsupportedReason }) {
+	const copy = UNSUPPORTED_COPY[reason]
+
 	return (
 		<div className="flex flex-col items-center gap-2.5 px-3 py-7 text-center">
 			<BrokenLink className="text-gray-300" />
-			<p className="text-[13px] font-semibold leading-[18px] text-gray-700">
-				This content item isn&rsquo;t connected to a dynamic page.
-			</p>
-			<p className="text-[11px] leading-4 tracking-tiny text-gray-500">
-				SEO analysis needs a rendered URL to score against. Enable a dynamic page on this
-				container to turn it on.
-			</p>
+			<p className="text-[13px] font-semibold leading-[18px] text-gray-700">{copy.title}</p>
+			<p className="text-[11px] leading-4 tracking-tiny text-gray-500">{copy.body}</p>
 		</div>
 	)
 }

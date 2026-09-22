@@ -6,14 +6,8 @@ import { contentItemMethods, getManagementAPIToken, useAgilityAppSDK } from "@ag
 import type { EditFieldName } from "@/analysis/types"
 import { AGILITY_SEO_FIELDS, findSlugValue } from "@/agility/fieldNames"
 import { resolveManagementApiUrl } from "@/agility/mgmtApiUrl"
-import { ErrorState, KeyphraseUnlockPrompt, NotDynamicPageState } from "@/components/EmptyState"
-import { KeyphraseInput } from "@/components/KeyphraseInput"
-import { Refresh } from "@/components/icons"
-import { ResultList } from "@/components/ResultList"
+import { AnalysisPanel, Panel } from "@/components/AnalysisPanel"
 import { AnalysisSkeleton } from "@/components/Skeleton"
-import { ScoreSummary } from "@/components/ScoreSummary"
-import { SnippetEditor } from "@/components/SnippetEditor"
-import { Tabs, type TabKey } from "@/components/Tabs"
 import { measureTitleWidth } from "@/lib/pixelWidth"
 import { useAnalysis } from "@/lib/useAnalysis"
 import { useDebouncedValue } from "@/lib/useDebouncedValue"
@@ -21,19 +15,17 @@ import { useKeyphraseSave } from "@/lib/useKeyphraseSave"
 import { usePageContent } from "@/lib/usePageContent"
 
 /**
- * The content item sidebar.
+ * The content item sidebar: dynamic-page items - posts, articles, products.
  *
- * Chosen over the page sidebar because dynamic-page content items - posts,
- * articles, products - are where SEO volume lives, and because this surface can
- * write: it has setFieldValue and saveContentItem, which the page sidebar does
- * not. Meta description edits land on the item's own Agility fields, so an
- * existing site picks them up through the Fetch API with no changes.
+ * This surface can *write* through the App SDK: it has setFieldValue and
+ * saveContentItem, so meta description edits land on the item's own Agility
+ * fields as the editor types and the CMS's own save flow persists them. The
+ * page sidebar (src/app/page-sidebar) is the same panel for regular pages,
+ * with a different way of finding its page and saving its description.
  */
 export default function ContentItemSidebar() {
-	const { initializing, appInstallContext, instance, locale, contentItem, contentModel } =
-		useAgilityAppSDK()
+	const { initializing, appInstallContext, instance, locale, contentItem } = useAgilityAppSDK()
 
-	const [activeTab, setActiveTab] = useState<TabKey>("seo")
 	// Seeded from the app's own store when the page loads, written back on
 	// commit (blur / Enter). Not a field on the content item - see
 	// src/store/keyphraseStore.ts for why.
@@ -178,143 +170,40 @@ export default function ContentItemSidebar() {
 		)
 	}
 
-	if (pageState.status === "not-a-dynamic-page") {
-		return (
-			<Panel>
-				<Header onRefresh={null} />
-				<NotDynamicPageState />
-				<Footer />
-			</Panel>
-		)
-	}
-
 	return (
-		<Panel>
-			<Header onRefresh={() => void loadRenderedPage()} />
-
-			<KeyphraseInput
-				value={keyphrase}
-				onChange={setKeyphrase}
-				onCommit={onKeyphraseCommit}
-				hint={KEYPHRASE_HINTS[saveState]}
-			/>
-
-			{pageState.status === "error" ? (
-				<ErrorState message={pageState.message} onRetry={() => void loadRenderedPage()} />
-			) : null}
-
-			{pageState.status === "loading" ? (
-				<AnalysisSkeleton label="Analyzing rendered page&hellip;" />
-			) : null}
-
-			{pageState.status === "ready" ? (
-				<>
-					{analysisState.status === "ready" ? (
-						<>
-							<ScoreSummary
-								seo={analysisState.data.scores.seo}
-								readability={analysisState.data.scores.readability}
-							/>
-
-							<Tabs active={activeTab} onChange={setActiveTab} />
-
-							{activeTab === "seo" ? (
-								<>
-									<KeyphraseUnlockPrompt
-										lockedCount={analysisState.data.lockedKeyphraseCheckCount}
-									/>
-									<ResultList
-										results={analysisState.data.seoResults}
-										onFix={onFix}
-										emptyMessage="No SEO findings for this page."
-									/>
-								</>
-							) : (
-								<ResultList
-									results={analysisState.data.readabilityResults}
-									onFix={onFix}
-									emptyMessage="No readability results for this page."
-								/>
-							)}
-
-							<div className="pt-1">
-								<SnippetEditor
-									title={seoTitle}
-									description={description}
-									url={pageData?.liveUrl ?? pageData?.previewUrl ?? null}
-									onDescriptionChange={onDescriptionChange}
-									descriptionRef={descriptionRef}
-								/>
-							</div>
-
-							{analysisState.data.fullLanguageSupport ? null : (
-								<p className="pt-3 text-2xs leading-[14px] tracking-tiny text-gray-400">
-									This language has no dedicated analysis support, so some checks are
-									skipped.
-								</p>
-							)}
-						</>
-					) : null}
-
-					{analysisState.status === "loading" ? (
-						<AnalysisSkeleton label="Scoring&hellip;" />
-					) : null}
-
-					{analysisState.status === "error" ? (
-						<ErrorState message={analysisState.message} />
-					) : null}
-				</>
-			) : null}
-
-			<Footer wordCount={analysisState.status === "ready" ? analysisState.data.wordCount : null} />
-		</Panel>
+		<AnalysisPanel
+			pageState={pageState}
+			analysisState={analysisState}
+			onRefresh={() => void loadRenderedPage()}
+			keyphrase={{
+				value: keyphrase,
+				onChange: setKeyphrase,
+				onCommit: onKeyphraseCommit,
+				hint: KEYPHRASE_HINTS[saveState]
+			}}
+			description={{
+				value: description,
+				onChange: onDescriptionChange,
+				ref: descriptionRef,
+				savesTo: (
+					<>
+						Saves to{" "}
+						<code className="font-mono text-gray-500">{AGILITY_SEO_FIELDS.metaDescription}</code>{" "}
+						on this content item.
+					</>
+				)
+			}}
+			seoTitle={seoTitle}
+			onFix={onFix}
+		/>
 	)
 }
 
 const KEYPHRASE_HINTS: Record<ReturnType<typeof useKeyphraseSave>["state"], string> = {
 	idle: "Saved for this item when you leave the field. The analysis updates as you type.",
-	saving: "Saving\u2026",
+	saving: "Saving…",
 	saved: "Saved for this item.",
 	error: "Could not save the keyphrase. The analysis still uses it for this session.",
 	"not-configured":
 		"This app has no keyphrase storage configured, so the phrase is not saved. Ask whoever hosts it to connect Redis."
-}
-
-function Panel({ children }: { children: React.ReactNode }) {
-	// The CMS panel already supplies px-6 pt-3 pb-4 around this iframe, so the
-	// app adds no outer padding of its own.
-	return <div className="flex w-full flex-col">{children}</div>
-}
-
-function Header({ onRefresh }: { onRefresh: (() => void) | null }) {
-	return (
-		<div className="flex items-center justify-between">
-			<h1 className="text-sm font-semibold leading-5 tracking-label text-gray-900"></h1>
-			{onRefresh ? (
-				<button
-					type="button"
-					onClick={onRefresh}
-					title="Re-analyze the rendered page"
-					className="text-gray-400 transition-colors hover:text-gray-600"
-				>
-					<Refresh />
-				</button>
-			) : null}
-		</div>
-	)
-}
-
-function Footer({ wordCount }: { wordCount?: number | null }) {
-	return (
-		<div className="mt-4 flex flex-col gap-0.5 border-t border-gray-200 pt-2.5">
-			{wordCount ? (
-				<span className="text-2xs leading-[14px] tracking-tiny text-gray-400">
-					{wordCount} words analyzed
-				</span>
-			) : null}
-			<span className="text-2xs leading-[14px] tracking-tiny text-gray-400">
-				Uses the open-source YoastSEO.js library
-			</span>
-		</div>
-	)
 }

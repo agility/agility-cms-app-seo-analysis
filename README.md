@@ -1,27 +1,32 @@
 # SEO Analysis for Agility CMS
 
-An Agility CMS app that scores dynamic-page content items — blog posts,
-articles, products — for SEO and readability against a focus keyphrase, using
-the open-source [YoastSEO.js](https://github.com/Yoast/wordpress-seo) library.
+An Agility CMS app that scores pages for SEO and readability against a focus
+keyphrase, using the open-source [YoastSEO.js](https://github.com/Yoast/wordpress-seo)
+library. It works on both kinds of page Agility renders:
 
-It renders in the **content item sidebar**, reads the item's real rendered page,
-and writes meta descriptions back to Agility's own SEO fields so an existing site
-picks them up through the Fetch API with no changes.
+- **Dynamic-page content items** — blog posts, articles, products — in the
+  **content item sidebar**.
+- **Regular pages** from the page tree, in the **page sidebar**.
+
+Either way it reads the real rendered page and writes meta descriptions back to
+Agility's own SEO fields, so an existing site picks them up through the Fetch
+API with no changes.
 
 ---
 
 ## How it works
 
 ```
-useAgilityAppSDK()  ──►  referenceName, contentID, locale, instance.guid
+useAgilityAppSDK()  ──►  content item sidebar: referenceName, contentID
+                         page sidebar:         pageItem.ItemContainerID (the page ID)
         │
-        ├─ getManagementAPIToken() ──► getContainerByReferenceName()
-        │                                   └─► contentViewID, isDynamicPageList
-        │                                        └─ not a dynamic page? empty state, stop
-        │
-        ├─ GET /content/previewUrl?containerId&contentItemID
-        │        └─► server fetches it, follows the preview-cookie redirect,
-        │            extracts <main>                          [/api/page-content]
+        ├─ getManagementAPIToken() ──► [/api/page-content]
+        │     content item: getContainerByReferenceName() ► isDynamicPageList?
+        │                   GET /content/previewUrl?containerId&contentItemID
+        │     page:         GET /page/{id} ► folder, link or dynamic template? stop
+        │                   GET /page/previewUrl/{id}
+        │        └─► server fetches the URL, follows the preview-cookie redirect,
+        │            extracts <main>
         │
         └─ meta description, and an optional keyphrase, debounced 700ms
                  │
@@ -32,10 +37,19 @@ useAgilityAppSDK()  ──►  referenceName, contentID, locale, instance.guid
           scores + grouped results  ──►  "Fix" jumps to the field the engine names
 ```
 
-**Why the content item sidebar and not the page sidebar.** Dynamic pages are
-where SEO volume lives, and this surface can *write*: it has `setFieldValue` and
-`saveContentItem`, which the page sidebar does not. A page-sidebar version would
-have to round-trip every edit through the Management API.
+**Two surfaces, one panel.** `src/components/AnalysisPanel.tsx` is everything
+the editor sees; the two sidebars only differ in how they find their page and
+where they write the meta description.
+
+- The **content item sidebar** can write through the App SDK: `setFieldValue`
+  puts the description on the item as the editor types, and the CMS's own save
+  flow persists it.
+- The **page sidebar** is read-only in the App SDK (`getPageItem` and nothing
+  else), so the description is saved on blur through the Management API
+  (`PUT /api/page-seo`): the route re-reads the page, changes `seo.metaDescription`
+  and re-posts the whole page with `linkExistingComponents=true` so its
+  components stay attached to their existing content. It then calls the SDK's
+  `refresh()` so the manager reloads the page it is showing.
 
 **Why the rendered page and not the item's fields.** An Agility page is assembled
 from components across zones, so no single content item contains the whole page.
@@ -46,10 +60,13 @@ uniqueness and word count meaningless. The rendered page is what Google sees.
 
 | Route | What it is |
 |---|---|
-| `/content-item-sidebar` | The analysis panel |
+| `/content-item-sidebar` | The analysis panel for a dynamic-page content item |
+| `/page-sidebar` | The same panel for a regular page |
 | `/install` | Install screen |
 | `/api/analyze` | Runs the engine (server only) |
-| `/api/page-content` | Resolves and fetches the item's rendered page |
+| `/api/page-content` | Resolves a content item or a page to its rendered HTML and main content |
+| `/api/keyphrase` | Saves the focus keyphrase for an item or a page |
+| `/api/page-seo` | Saves a regular page's meta description through the Management API |
 
 Route names are **not** configurable — Agility builds these URLs by string
 concatenation in `useAppConfig.ts`.
@@ -88,11 +105,11 @@ keywords field, which means something else.
 | | |
 |---|---|
 | Store | Upstash Redis via the **Vercel Marketplace** (`@upstash/redis`). Vercel provisions it, bills it and injects the credentials; the data lives outside the app, so it survives cold starts and deploys. Development falls back to an in-memory map when the env vars are absent. **Production does not fall back**: saves fail with a visible message rather than silently losing data. |
-| Key | `{guid}-{locale}-content-{contentID}` — see `src/store/keyphraseStore.ts`. Content IDs are shared across an item's locales and a keyphrase is language-specific, so the locale is part of the key. |
+| Key | `{guid}-{locale}-content-{contentID}` for a content item, `{guid}-{locale}-page-{pageID}` for a page — see `src/store/keyphraseStore.ts`. IDs are shared across an item's locales and a keyphrase is language-specific, so the locale is part of the key. |
 | Value | `{ keyphrase, updatedAt }` |
 | Read | Returned by `/api/page-content` alongside the rendered page, so it costs no extra round trip and no extra authorization. |
 | Write | `PUT /api/keyphrase`, on **blur or Enter**, never per keystroke. An empty value deletes the key. |
-| Authorization | The caller's Management API token must be able to read the item it names. The route re-fetches the item with it before writing. |
+| Authorization | The caller's Management API token must be able to read the item or page it names. The route re-fetches it with that token before writing. |
 | Region | One database, one region, chosen when it is created. Agility has instances in Canada, Europe and Australia as well as the US, and keyphrases from all of them land in this one region. A keyphrase is low-sensitivity, but say so in any data-processing description of the app. |
 
 The `isCornerstone` flag the engine already supports can be stored the same
@@ -110,11 +127,20 @@ the App SDK* (no handler in the manager; per-user), and *SQLite on the app*
 
 | Data | Home |
 |---|---|
-| Meta description | `DynamicPageMetaDescription` on the item |
+| Meta description, content item | `DynamicPageMetaDescription` on the item |
 | Meta keywords, header code | `DynamicPageMetaKeywords`, `DynamicPageAdditionalHeaderCode` |
+| Meta description, regular page | `seo.metaDescription` on the page record, via the Management API |
 
-These are Agility system fields present on every dynamic-page item — no model
-change needed — and the CMS's own SEO tab reads and writes the same keys.
+The item fields are Agility system fields present on every dynamic-page item —
+no model change needed — and the CMS's own SEO tab reads and writes the same
+keys. The page field is the one the page's SEO tab edits.
+
+**One thing to verify on a real instance:** the page save posts to
+`POST /page?parentPageID={own parent}&placeBeforePageItemID=-1&linkExistingComponents=true`,
+which is how the Management SDK itself updates an existing page. It should leave
+the page's position in its parent untouched; if a saved page ever moves to the
+bottom of its siblings, pass the next sibling's ID as `placeBeforePageItemID`
+(the sitemap endpoint has the order).
 
 ## Development
 
@@ -141,8 +167,9 @@ are held in memory until `UPSTASH_REDIS_REST_URL` / `_TOKEN` are set - see
 
 Then, in the CMS:
 
-Open any content item whose container is a dynamic page list — the panel scores
-it immediately. No field to add.
+Open any content item whose container is a dynamic page list, or any regular
+page in the page tree — the panel scores it immediately. No field to add.
+Folders, links and dynamic page templates show an explanatory state instead.
 
 ```bash
 npm run typecheck
@@ -177,7 +204,10 @@ fonts, not tokens. Both have to be reproduced deliberately:
 - **Title pixel width is measured in the browser** (`src/lib/pixelWidth.ts`) and
   passed into the request. The server has no font metrics.
 - **The SEO title is read-only here.** On a dynamic page it comes from the page
-  template's title formula, not a field on the content item.
+  template's title formula, not a field on the content item. On a regular page
+  the site usually decorates the page's Title (a suffix, the site name), so the
+  panel shows what the rendered page actually has rather than offering to edit
+  a field it can't preview honestly.
 - **`yoastseo@3.6.0` does not ship the `yoastseo/contract` or
   `yoastseo/researcher` entry points its README documents** — `files` is
   `["build","!*.map","vendor","images"]`, so they exist only on the project's

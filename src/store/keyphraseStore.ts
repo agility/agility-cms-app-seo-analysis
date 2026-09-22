@@ -45,6 +45,15 @@ export function keyphraseKey(guid: string, locale: string, contentID: number): s
 	return `${guid.toLowerCase()}-${locale.toLowerCase()}-content-${contentID}`
 }
 
+/**
+ * `{guid}-{locale}-page-{pageID}` - the same idea for a regular page in the
+ * page sidebar. Page IDs and content IDs are separate sequences, so the
+ * segment name is what keeps the two from colliding.
+ */
+export function pageKeyphraseKey(guid: string, locale: string, pageID: number): string {
+	return `${guid.toLowerCase()}-${locale.toLowerCase()}-page-${pageID}`
+}
+
 export class KeyphraseStoreNotConfiguredError extends Error {
 	constructor() {
 		super(

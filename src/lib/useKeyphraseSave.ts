@@ -2,13 +2,15 @@ import { useCallback, useRef, useState } from "react"
 
 export type KeyphraseSaveState = "idle" | "saving" | "saved" | "error" | "not-configured"
 
-export interface KeyphraseSaveContext {
+/** What the keyphrase belongs to: a content item, or a regular page. */
+export type KeyphraseTarget = { contentID: number; pageID?: undefined } | { pageID: number; contentID?: undefined }
+
+export type KeyphraseSaveContext = {
 	mgmtApiUrl: string
 	token: string
 	guid: string
 	locale: string
-	contentID: number
-}
+} & KeyphraseTarget
 
 /**
  * Persists the focus keyphrase to the app's own store.

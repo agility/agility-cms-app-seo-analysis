@@ -9,7 +9,7 @@ export default function HomePage() {
 			<h1 className="text-xl font-semibold text-gray-900">SEO Analysis for Agility CMS</h1>
 			<p className="text-sm leading-6 text-gray-600">
 				This is an Agility CMS app. It has no interface of its own &mdash; install it on an
-				Agility instance and it renders in the content item sidebar.
+				Agility instance and it renders in the page sidebar and the content item sidebar.
 			</p>
 			<p className="text-sm leading-6 text-gray-600">
 				The analysis uses the open-source{" "}
