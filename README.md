@@ -109,8 +109,22 @@ From the command line, without the CMS:
 
 ```bash
 npm run site-health -- https://www.example.com/sitemap.xml --out report.json
-SEMRUSH_API_KEY=… npm run site-health -- urls.txt --semrush <projectID>
+npm run site-health -- urls.txt --semrush <projectID>   # SEMRUSH_API_KEY from .env.local
 ```
+
+Semrush Site Audit alone, through the same client the app uses (each command
+notes its cost in API units):
+
+```bash
+npm run semrush -- status            # health, pages crawled, every issue with its count and change
+npm run semrush -- history           # past crawls
+npm run semrush -- launch            # rerun the crawl with the project's saved settings
+npm run semrush -- pages <issueID>   # the URLs behind one issue
+```
+
+Both read `SEMRUSH_API_KEY` and `SEMRUSH_PROJECT_ID` from `.env.local`
+(see `.env.local.example`). Running them on a real project is how the client's
+response shapes get checked before customers depend on them.
 
 A scan runs inside one function call (up to 5 minutes; ~45 s for 970 pages).
 Larger sites stop starting new pages near the limit and report how many were
