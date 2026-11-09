@@ -47,8 +47,15 @@ describe("runChecks", () => {
 	})
 
 	it("flags alt text that is a file name", () => {
-		const issues = runChecks("u", page(`<img src="https://cdn/x/photo-123.jpg" alt="photo-123.jpg">`))
-		expect(issues.some((i) => i.check === "img-alt-filename")).toBe(true)
+		for (const alt of ["photo-123.jpg", "IMG_1671", "Scotiabank — s1.png", "hero_banner_v2"]) {
+			const src = alt === "hero_banner_v2" ? "https://cdn/x/hero_banner_v2.png" : "https://cdn/x/a.jpg"
+			expect(runChecks("u", page(`<img src="${src}" alt="${alt}">`)).some((i) => i.check === "img-alt-filename"), alt).toBe(true)
+		}
+	})
+
+	it("accepts a logo whose alt is the company name, even when the file has the same name", () => {
+		const issues = runChecks("u", page(`<img src="https://cdn/logos/pepsico.svg" alt="Pepsico"><img src="https://cdn/9thwonder.png" alt="9thWonder">`))
+		expect(issues.some((i) => i.check === "img-alt-filename")).toBe(false)
 	})
 
 	it("reports missing title and meta description as page-level issues", () => {

@@ -123,12 +123,20 @@ function accessibleName(a: Element): string {
 	return a.getAttribute("title")?.trim() ?? ""
 }
 
+/**
+ * Alt text that is a URL, ends in an image extension, or is a camera or export
+ * name ("IMG_1671", "DSC0042", "screenshot-2024-01-02"). Matching the file's
+ * name alone isn't enough: a logo named pepsico.svg with the alt "Pepsico" is
+ * correctly described.
+ */
 function looksLikeFileName(alt: string, src: string): boolean {
 	const a = alt.trim().toLowerCase()
 	if (/^https?:\/\//.test(a)) return true
-	if (/\.(jpe?g|png|gif|webp|svg|avif|jfif)$/.test(a)) return true
-	const file = src.split("?")[0].split("/").pop()?.toLowerCase() ?? ""
-	return Boolean(file) && (a === file || a === file.replace(/\.[a-z0-9]+$/, ""))
+	if (/\.(jpe?g|png|gif|webp|svg|avif|jfif)\b/.test(a)) return true
+	if (/^(img|dsc|dscn|dcim|image|photo|pxl|screenshot|screen shot)[-_ ]?\d/.test(a)) return true
+	const file = src.split("?")[0].split("/").pop()?.toLowerCase().replace(/\.[a-z0-9]+$/, "") ?? ""
+	const machineLike = !/\s/.test(a) && (/_/.test(a) || /\d{3,}/.test(a))
+	return Boolean(file) && a === file && machineLike
 }
 
 /** The image's file name without query or size suffix: the same on every page it is used. */
