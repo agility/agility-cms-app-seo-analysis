@@ -20,7 +20,7 @@
 		"site-health": "tsx scripts/site-health.ts"
 	},
 	"dependencies": {
-		"@agility/app-sdk": "^2.2.1",
+		"@agility/app-sdk": "^2.5.0",
 		"@upstash/redis": "^1.38.4",
 		"classnames": "^2.5.1",
 		"linkedom": "^0.18.5",

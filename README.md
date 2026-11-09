@@ -67,9 +67,54 @@ uniqueness and word count meaningless. The rendered page is what Google sees.
 | `/api/page-content` | Resolves a content item or a page to its rendered HTML and main content |
 | `/api/keyphrase` | Saves the focus keyphrase for an item or a page |
 | `/api/page-seo` | Saves a regular page's meta description through the Management API |
+| `/sections/site-health` | The Site Health section: the whole site's issues, grouped by cause |
+| `/api/site-health/scan` | Scans every page in the site's sitemap, plus Semrush if connected, and stores the report |
+| `/api/site-health/report` | The stored report, optionally for one content item, page or URL |
+| `/api/site-health/check-url` | Runs the built-in checks on one page now |
+| `/api/site-health/semrush` | Connects, checks, disconnects Semrush, or starts a Semrush crawl |
 
 Route names are **not** configurable — Agility builds these URLs by string
 concatenation in `useAppConfig.ts`.
+
+## Site Health
+
+Every SEO and accessibility tool reports issues per URL. Site Health reports
+them per **content item and field**, so an editor opens the field to fix
+instead of hunting through a page. Plan: `system-overview/plans/seo-tool-apps.md`.
+
+- **Built-in checks** (`src/sitehealth/checks.ts`) run on each page's rendered
+  HTML, with no vendor account: images without alt text or with a file name as
+  alt, links with no text or generic text, H1s, title and meta description
+  length, very long paragraphs.
+- **Located in Agility** (`src/sitehealth/locate.ts`): the starters render
+  `data-agility-page`, `data-agility-component` (content ID) and
+  `data-agility-field` (field name). Each finding walks up to the nearest of
+  each.
+- **Grouped by cause** (`src/sitehealth/group.ts`): one check on one element in
+  one field is one group, however many pages or items it appears in. A shared
+  component, or the same snippet pasted into 95 posts, is one line.
+- **Semrush** (`src/sitehealth/semrush.ts`): with a project ID and the
+  customer's own API key, each scan adds the latest Site Audit, and "Run
+  Semrush crawl" starts a new one. The key is encrypted with
+  `SITE_HEALTH_SECRET` and stored in Redis; it never reaches a browser. (Not
+  OAuth: Semrush issues OAuth clients only through its support team, and Site
+  Audit takes a key.) ⚠️ The response field names are from Semrush's docs and
+  haven't been checked against a live response yet.
+- **Who may call the routes** (`src/sitehealth/server/auth.ts`): each route
+  checks the caller's Management API token opens the instance (`GET
+  /instance/{guid}/locales`), and only on Agility's own regional API hosts.
+  Site URLs must be public https hosts.
+
+From the command line, without the CMS:
+
+```bash
+npm run site-health -- https://www.example.com/sitemap.xml --out report.json
+SEMRUSH_API_KEY=… npm run site-health -- urls.txt --semrush <projectID>
+```
+
+A scan runs inside one function call (up to 5 minutes; ~45 s for 970 pages).
+Larger sites stop starting new pages near the limit and report how many were
+left.
 
 ## The focus keyphrase
 

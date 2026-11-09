@@ -1,10 +1,16 @@
 {
 	"name": "SEO Analysis",
 	"documentationLink": "https://github.com/agility/agility-cms-app-seo-analysis",
-	"description": "Scores your pages for SEO and readability against a focus keyphrase, using the open-source YoastSEO.js analysis library.",
-	"version": "0.1.0",
-	"__sdkVersion": "2.0.0",
+	"description": "Scores your pages for SEO and readability against a focus keyphrase, using the open-source YoastSEO.js analysis library, and checks your whole site for SEO and accessibility issues, each traced to the content item and field to fix. Connects to Semrush Site Audit.",
+	"version": "0.2.0",
+	"__sdkVersion": "2.5.0",
 	"configValues": [
+		{
+			"name": "siteUrl",
+			"label": "Site URL",
+			"type": "string",
+			"description": "Your live site, e.g. https://www.example.com. Site Health scans the pages in its /sitemap.xml."
+		},
 		{
 			"name": "contentSelector",
 			"label": "Main content selector",
@@ -20,11 +26,19 @@
 	],
 	"capabilities": {
 		"contentItemSidebar": {
-			"description": "SEO and readability analysis for this content item's dynamic page."
+			"description": "SEO and readability analysis for this content item's dynamic page, and the site health issues this item causes."
 		},
 		"pageSidebar": {
-			"description": "SEO and readability analysis for this page."
+			"description": "SEO and readability analysis for this page, and its site health issues."
 		},
+		"sections": [
+			{
+				"name": "site-health",
+				"label": "Site Health",
+				"description": "Every SEO and accessibility issue on your site, grouped by cause and traced to the content item and field to fix.",
+				"icon": "IconChecklist"
+			}
+		],
 		"installScreen": true
 	}
 }

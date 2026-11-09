@@ -1,22 +1,25 @@
 import cn from "classnames"
 
-export type TabKey = "seo" | "readability"
+export type TabKey = "seo" | "readability" | "health"
 
 interface TabsProps {
 	active: TabKey
 	onChange: (tab: TabKey) => void
 	counts?: Partial<Record<TabKey, number>>
+	/** Show the Site health tab (the surface has passed one in). */
+	withHealth?: boolean
 }
 
 const TABS: { key: TabKey; label: string }[] = [
 	{ key: "seo", label: "SEO" },
-	{ key: "readability", label: "Readability" }
+	{ key: "readability", label: "Readability" },
+	{ key: "health", label: "Site health" }
 ]
 
-export function Tabs({ active, onChange }: TabsProps) {
+export function Tabs({ active, onChange, withHealth }: TabsProps) {
 	return (
 		<div className="mb-3 flex border-b border-gray-200" role="tablist">
-			{TABS.map((tab) => (
+			{TABS.filter((tab) => withHealth || tab.key !== "health").map((tab) => (
 				<button
 					key={tab.key}
 					type="button"
