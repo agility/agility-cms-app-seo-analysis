@@ -40,6 +40,8 @@ export interface AnalysisPanelProps {
 	titlePlaceholder?: string
 	/** A result's "Fix" affordance - scroll to and focus the field it names. */
 	onFix: (field: EditFieldName) => void
+	/** The Site health tab's content. Without it, the tab isn't shown. */
+	siteHealth?: React.ReactNode
 }
 
 /**
@@ -58,7 +60,8 @@ export function AnalysisPanel({
 	description,
 	seoTitle,
 	titlePlaceholder,
-	onFix
+	onFix,
+	siteHealth
 }: AnalysisPanelProps) {
 	const [activeTab, setActiveTab] = useState<TabKey>("seo")
 
@@ -102,9 +105,11 @@ export function AnalysisPanel({
 								readability={analysisState.data.scores.readability}
 							/>
 
-							<Tabs active={activeTab} onChange={setActiveTab} />
+							<Tabs active={activeTab} onChange={setActiveTab} withHealth={Boolean(siteHealth)} />
 
-							{activeTab === "seo" ? (
+							{activeTab === "health" ? (
+								siteHealth
+							) : activeTab === "seo" ? (
 								<>
 									<KeyphraseUnlockPrompt
 										lockedCount={analysisState.data.lockedKeyphraseCheckCount}

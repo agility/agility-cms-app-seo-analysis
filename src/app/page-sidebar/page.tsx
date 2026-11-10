@@ -7,7 +7,9 @@ import type { EditFieldName } from "@/analysis/types"
 import { resolveManagementApiUrl } from "@/agility/mgmtApiUrl"
 import { AnalysisPanel, Panel } from "@/components/AnalysisPanel"
 import type { UnsupportedReason } from "@/components/EmptyState"
+import { SiteHealthTab } from "@/components/SiteHealthTab"
 import { AnalysisSkeleton } from "@/components/Skeleton"
+import { siteOrigin } from "@/sitehealth/siteOrigin"
 import { measureTitleWidth } from "@/lib/pixelWidth"
 import { useAnalysis } from "@/lib/useAnalysis"
 import { useDebouncedValue } from "@/lib/useDebouncedValue"
@@ -193,6 +195,16 @@ export default function PageSidebar() {
 			seoTitle={seoTitle}
 			titlePlaceholder="Set in the page's SEO tab"
 			onFix={onFix}
+			siteHealth={
+				instance?.guid && pageID ? (
+					<SiteHealthTab
+						guid={instance.guid}
+						pageID={pageID}
+						pageUrl={pageData?.liveUrl ?? null}
+						siteUrl={siteOrigin(appInstallContext?.configuration?.siteUrl, pageData?.liveUrl)}
+					/>
+				) : undefined
+			}
 		/>
 	)
 }

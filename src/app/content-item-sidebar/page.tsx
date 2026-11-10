@@ -7,7 +7,9 @@ import type { EditFieldName } from "@/analysis/types"
 import { AGILITY_SEO_FIELDS, findSlugValue } from "@/agility/fieldNames"
 import { resolveManagementApiUrl } from "@/agility/mgmtApiUrl"
 import { AnalysisPanel, Panel } from "@/components/AnalysisPanel"
+import { SiteHealthTab } from "@/components/SiteHealthTab"
 import { AnalysisSkeleton } from "@/components/Skeleton"
+import { siteOrigin } from "@/sitehealth/siteOrigin"
 import { measureTitleWidth } from "@/lib/pixelWidth"
 import { useAnalysis } from "@/lib/useAnalysis"
 import { useDebouncedValue } from "@/lib/useDebouncedValue"
@@ -195,6 +197,16 @@ export default function ContentItemSidebar() {
 			}}
 			seoTitle={seoTitle}
 			onFix={onFix}
+			siteHealth={
+				instance?.guid && contentItem?.contentID ? (
+					<SiteHealthTab
+						guid={instance.guid}
+						contentID={contentItem.contentID}
+						pageUrl={pageData?.liveUrl ?? null}
+						siteUrl={siteOrigin(appInstallContext?.configuration?.siteUrl, pageData?.liveUrl)}
+					/>
+				) : undefined
+			}
 		/>
 	)
 }
